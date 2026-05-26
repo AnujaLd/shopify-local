@@ -1,63 +1,59 @@
-{% comment %}
-Custom Product Builder Section
-- Fully customizable from Theme Editor
-- Responsive, clean design
-- No hardcoded product/collection IDs
-- No apps or page builders
-- All logic in Liquid, CSS, and vanilla JS
-{% endcomment %}
-
-<section id="custom-product-builder-{{ section.id }}" class="custom-product-builder-section" style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
+<div id="custom-product-builder-{{ section.id }}" class="custom-product-builder-section" style="background-color: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }};">
   <div class="custom-product-builder__header">
-    {% if section.settings.heading != blank %}
+    {%- if section.settings.heading != blank -%}
       <h2 class="custom-product-builder__heading">{{ section.settings.heading }}</h2>
-    {% endif %}
-    {% if section.settings.subtitle != blank %}
+    {%- endif -%}
+    {%- if section.settings.subtitle != blank -%}
       <p class="custom-product-builder__subtitle">{{ section.settings.subtitle }}</p>
-    {% endif %}
+    {%- endif -%}
   </div>
 
-  {% assign collection = collections[section.settings.collection] %}
-  {% if collection == nil or collection.products_count == 0 %}
+  {%- assign selected_collection = collections[section.settings.collection] -%}
+  {%- if section.settings.collection == blank or selected_collection == nil -%}
     <div class="custom-product-builder__empty">
-      {% if section.settings.collection == blank %}
-        <p>Please select a collection in the section settings.</p>
-      {% else %}
-        <p>No products found in the selected collection.</p>
-      {% endif %}
+      <p>Please select a collection in the section settings.</p>
     </div>
-  {% else %}
+  {%- elsif selected_collection.products_count == 0 -%}
+    <div class="custom-product-builder__empty">
+      <p>No products found in the selected collection.</p>
+    </div>
+  {%- else -%}
     <div class="custom-product-builder__grid columns-{{ section.settings.grid_columns }}">
-      {% for product in collection.products limit: section.settings.products_to_show %}
-        {% render 'custom-product-builder-card',
+      {%- for product in selected_collection.products limit: section.settings.products_to_show -%}
+        {%- render 'custom-product-builder-card',
           product: product,
           show_vendor: section.settings.show_vendor,
           show_rating: section.settings.show_rating,
           show_quick_add: section.settings.show_quick_add,
           enable_sale_badge: section.settings.enable_sale_badge,
           enable_stock_message: section.settings.enable_stock_message
-        %}
-      {% endfor %}
+        -%}
+      {%- endfor -%}
     </div>
-  {% endif %}
-</section>
+  {%- endif -%}
+</div>
 
 <style>
 /* Inline CSS for section styling and responsiveness */
 .custom-product-builder-section {
-  padding: 2rem 0;
+  padding: 3rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 .custom-product-builder__header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 .custom-product-builder__heading {
-  font-size: 2rem;
-  margin: 0 0 0.5rem 0;
+  font-size: 2.25rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
 }
 .custom-product-builder__subtitle {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  margin: 0;
   color: inherit;
+  opacity: 0.8;
 }
 .custom-product-builder__grid {
   display: grid;
@@ -72,15 +68,26 @@ Custom Product Builder Section
 .custom-product-builder__grid.columns-4 {
   grid-template-columns: repeat(4, 1fr);
 }
+@media (max-width: 990px) {
+  .custom-product-builder__grid.columns-3,
+  .custom-product-builder__grid.columns-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 @media (max-width: 768px) {
   .custom-product-builder__grid {
     grid-template-columns: 1fr !important;
+  }
+  .custom-product-builder__heading {
+    font-size: 1.75rem;
   }
 }
 .custom-product-builder__empty {
   text-align: center;
   color: #888;
-  padding: 2rem 0;
+  padding: 3rem 0;
+  border: 1px dashed #ddd;
+  border-radius: 4px;
 }
 </style>
 
