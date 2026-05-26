@@ -290,7 +290,7 @@
       "settings": {
         "heading": "Build Your Product",
         "subtitle": "Customize and add to cart instantly.",
-        "collection": "",
+        "collection": "frontpage",
         "products_to_show": 4,
         "bg_color": "#ffffff",
         "text_color": "#222222",
