@@ -1,0 +1,213 @@
+{%- comment -%}
+Custom Product Builder Product Card Snippet
+- Handles all product card UI and logic
+- Receives settings as variables
+{%- endcomment -%}
+
+{%- assign first_image = product.featured_image | default: product.images.first -%}
+{%- assign second_image = product.images[1] -%}
+
+<div class="cpb-card" data-product-id="{{ product.id }}" data-product-handle="{{ product.handle }}">
+  <div class="cpb-card__image-wrapper">
+    <a href="{{ product.url }}" class="cpb-card__image-link">
+      <img class="cpb-card__image cpb-card__image--primary" src="{{ first_image | image_url: width: 600 }}" alt="{{ product.title | escape }}">
+      {% if second_image %}
+        <img class="cpb-card__image cpb-card__image--secondary" src="{{ second_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy">
+      {% endif %}
+      {% if enable_sale_badge and product.compare_at_price > product.price %}
+        <span class="cpb-card__badge cpb-card__badge--sale">Sale</span>
+      {% endif %}
+    </a>
+    {% if enable_stock_message and product.variants.first.inventory_management and product.variants.first.inventory_quantity > 0 and product.variants.first.inventory_quantity <= 5 %}
+      <span class="cpb-card__stock">Only {{ product.variants.first.inventory_quantity }} left</span>
+    {% endif %}
+  </div>
+  <div class="cpb-card__info">
+    <div class="cpb-card__title-row">
+      <a href="{{ product.url }}" class="cpb-card__title">{{ product.title }}</a>
+      {% if show_vendor %}
+        <span class="cpb-card__vendor">{{ product.vendor }}</span>
+      {% endif %}
+    </div>
+    <div class="cpb-card__price-row">
+      <span class="cpb-card__price" data-price>{{ product.price | money }}</span>
+      {% if product.compare_at_price > product.price %}
+        <span class="cpb-card__compare" data-compare>{{ product.compare_at_price | money }}</span>
+      {% endif %}
+    </div>
+    {% if show_rating %}
+      <div class="cpb-card__rating">★★★★★</div>
+    {% endif %}
+    <form class="cpb-card__form" data-product-form>
+      {% if product.variants.size > 1 %}
+        <div class="cpb-card__variants">
+          <label for="cpb-variant-{{ product.id }}">Options:</label>
+          <select id="cpb-variant-{{ product.id }}" name="id" class="cpb-card__variant-select" data-variant-select>
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if variant.available == false %}disabled{% endif %} data-price="{{ variant.price }}" data-compare="{{ variant.compare_at_price }}" data-sale="{{ variant.compare_at_price > variant.price }}" data-available="{{ variant.available }}">
+                {{ variant.title }} {% unless variant.available %}(Sold out){% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      {% else %}
+        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+      {% endif %}
+      <div class="cpb-card__qty">
+        <label for="cpb-qty-{{ product.id }}">Qty:</label>
+        <input id="cpb-qty-{{ product.id }}" name="quantity" type="number" min="1" value="1" class="cpb-card__qty-input">
+      </div>
+      {% if show_quick_add %}
+        <button type="submit" class="cpb-card__add-btn" data-add-to-cart>Add to cart</button>
+        <span class="cpb-card__loading" hidden>Adding...</span>
+        <span class="cpb-card__success" hidden>Added!</span>
+        <span class="cpb-card__error" hidden>Error!</span>
+      {% endif %}
+    </form>
+    <div class="cpb-card__availability" data-availability>
+      {% if product.available %}In stock{% else %}Sold out{% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+.cpb-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+}
+.cpb-card__image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+.cpb-card__image {
+  width: 100%;
+  display: block;
+  transition: opacity 0.3s;
+}
+.cpb-card__image--secondary {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.cpb-card__image-wrapper:hover .cpb-card__image--secondary {
+  opacity: 1;
+}
+.cpb-card__image-wrapper:hover .cpb-card__image--primary {
+  opacity: 0;
+}
+.cpb-card__badge--sale {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.85rem;
+  padding: 0.25em 0.75em;
+  border-radius: 2em;
+  z-index: 2;
+}
+.cpb-card__stock {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  background: #fffbe6;
+  color: #b26a00;
+  font-size: 0.85rem;
+  padding: 0.25em 0.75em;
+  border-radius: 2em;
+  z-index: 2;
+}
+.cpb-card__info {
+  padding: 1rem;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cpb-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+.cpb-card__title {
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+}
+.cpb-card__vendor {
+  font-size: 0.9em;
+  color: #888;
+}
+.cpb-card__price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.cpb-card__price {
+  font-weight: 700;
+  color: #222;
+}
+.cpb-card__compare {
+  text-decoration: line-through;
+  color: #b0b0b0;
+  font-size: 0.95em;
+}
+.cpb-card__rating {
+  color: #ffb400;
+  font-size: 1.1em;
+}
+.cpb-card__form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cpb-card__variants {
+  flex: 1 1 100%;
+}
+.cpb-card__variant-select {
+  width: 100%;
+  padding: 0.25em;
+}
+.cpb-card__qty {
+  width: 70px;
+}
+.cpb-card__qty-input {
+  width: 50px;
+  padding: 0.25em;
+}
+.cpb-card__add-btn {
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 0.5em 1.2em;
+  border-radius: 2em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.cpb-card__add-btn[disabled] {
+  background: #ccc;
+  cursor: not-allowed;
+}
+.cpb-card__loading,
+.cpb-card__success,
+.cpb-card__error {
+  font-size: 0.95em;
+  margin-left: 0.5em;
+}
+.cpb-card__success { color: #388e3c; }
+.cpb-card__error { color: #e53935; }
+.cpb-card__availability {
+  font-size: 0.95em;
+  color: #888;
+  margin-top: 0.5em;
+}
+</style>
