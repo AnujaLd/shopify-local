@@ -72,22 +72,36 @@ Custom Product Builder Product Card Snippet
 
 <style>
 .cpb-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px 0 rgba(60, 72, 88, 0.13), 0 1.5px 6px 0 rgba(60, 72, 88, 0.08);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.35s cubic-bezier(.4,2,.6,1), transform 0.25s cubic-bezier(.4,2,.6,1);
+  will-change: box-shadow, transform;
+  position: relative;
+}
+.cpb-card:hover {
+  box-shadow: 0 12px 40px 0 rgba(60, 72, 88, 0.18), 0 3px 12px 0 rgba(60, 72, 88, 0.10);
+  transform: translateY(-6px) scale(1.025);
+  z-index: 2;
 }
 .cpb-card__image-wrapper {
   position: relative;
   overflow: hidden;
+  background: linear-gradient(120deg, #e0e7ff 0%, #f0fdfa 100%);
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .cpb-card__image {
   width: 100%;
   display: block;
-  transition: opacity 0.3s;
+  transition: opacity 0.4s cubic-bezier(.4,2,.6,1), transform 0.4s cubic-bezier(.4,2,.6,1);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(60, 72, 88, 0.07);
 }
 .cpb-card__image--secondary {
   position: absolute;
@@ -97,117 +111,185 @@ Custom Product Builder Product Card Snippet
 }
 .cpb-card__image-wrapper:hover .cpb-card__image--secondary {
   opacity: 1;
+  transform: scale(1.04) rotate(-1deg);
 }
 .cpb-card__image-wrapper:hover .cpb-card__image--primary {
   opacity: 0;
+  transform: scale(0.98) rotate(1deg);
 }
 .cpb-card__badge--sale {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  background: #e53935;
+  top: 1rem;
+  left: 1rem;
+  background: linear-gradient(90deg, #ff5858 0%, #ffb347 100%);
   color: #fff;
-  font-size: 0.85rem;
-  padding: 0.25em 0.75em;
+  font-size: 0.92rem;
+  padding: 0.32em 1em;
   border-radius: 2em;
+  box-shadow: 0 2px 8px rgba(255, 88, 88, 0.13);
+  font-weight: 700;
+  letter-spacing: 0.03em;
   z-index: 2;
+  animation: popIn 0.7s cubic-bezier(.4,2,.6,1);
 }
 .cpb-card__stock {
   position: absolute;
-  bottom: 0.75rem;
-  left: 0.75rem;
+  bottom: 1rem;
+  left: 1rem;
   background: #fffbe6;
   color: #b26a00;
-  font-size: 0.85rem;
-  padding: 0.25em 0.75em;
+  font-size: 0.92rem;
+  padding: 0.32em 1em;
   border-radius: 2em;
+  box-shadow: 0 2px 8px rgba(255, 215, 64, 0.13);
+  font-weight: 600;
   z-index: 2;
+  animation: popIn 0.7s cubic-bezier(.4,2,.6,1);
+}
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0; }
+  80% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
 }
 .cpb-card__info {
-  padding: 1rem;
+  padding: 1.3rem 1.2rem 1.2rem 1.2rem;
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.7rem;
 }
 .cpb-card__title-row {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.7rem;
   justify-content: space-between;
 }
 .cpb-card__title {
-  font-weight: 600;
-  color: inherit;
+  font-weight: 700;
+  color: #1e293b;
   text-decoration: none;
+  font-size: 1.13rem;
+  letter-spacing: 0.01em;
+  transition: color 0.2s;
+}
+.cpb-card__title:hover {
+  color: #6366f1;
 }
 .cpb-card__vendor {
-  font-size: 0.9em;
-  color: #888;
+  font-size: 0.97em;
+  color: #64748b;
+  font-weight: 500;
 }
 .cpb-card__price-row {
   display: flex;
   align-items: baseline;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 .cpb-card__price {
-  font-weight: 700;
-  color: #222;
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
 }
 .cpb-card__compare {
   text-decoration: line-through;
   color: #b0b0b0;
-  font-size: 0.95em;
+  font-size: 1.02em;
+  font-weight: 500;
 }
 .cpb-card__rating {
   color: #ffb400;
-  font-size: 1.1em;
+  font-size: 1.18em;
+  letter-spacing: 0.04em;
+  filter: drop-shadow(0 1px 2px #fff3);
 }
 .cpb-card__form {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.7rem;
   flex-wrap: wrap;
+  margin-top: 0.3rem;
 }
 .cpb-card__variants {
   flex: 1 1 100%;
 }
 .cpb-card__variant-select {
   width: 100%;
-  padding: 0.25em;
+  padding: 0.38em 0.5em;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  background: #f8fafc;
+  font-size: 1em;
+  transition: border 0.2s;
+}
+.cpb-card__variant-select:focus {
+  border-color: #6366f1;
+  outline: none;
 }
 .cpb-card__qty {
-  width: 70px;
+  width: 80px;
 }
 .cpb-card__qty-input {
-  width: 50px;
-  padding: 0.25em;
+  width: 54px;
+  padding: 0.32em 0.5em;
+  border-radius: 8px;
+  border: 1px solid #e0e7ef;
+  background: #f8fafc;
+  font-size: 1em;
+  transition: border 0.2s;
+}
+.cpb-card__qty-input:focus {
+  border-color: #6366f1;
+  outline: none;
 }
 .cpb-card__add-btn {
-  background: #222;
+  background: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
   color: #fff;
   border: none;
-  padding: 0.5em 1.2em;
+  padding: 0.6em 1.5em;
   border-radius: 2em;
   cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
+  font-weight: 700;
+  font-size: 1.05em;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+.cpb-card__add-btn:hover:not([disabled]) {
+  background: linear-gradient(90deg, #38bdf8 0%, #6366f1 100%);
+  box-shadow: 0 4px 16px rgba(56,189,248,0.13);
+  transform: scale(1.04);
 }
 .cpb-card__add-btn[disabled] {
-  background: #ccc;
+  background: #cbd5e1;
+  color: #fff;
   cursor: not-allowed;
+  box-shadow: none;
 }
 .cpb-card__loading,
 .cpb-card__success,
 .cpb-card__error {
-  font-size: 0.95em;
-  margin-left: 0.5em;
+  font-size: 1em;
+  margin-left: 0.7em;
+  font-weight: 500;
 }
-.cpb-card__success { color: #388e3c; }
-.cpb-card__error { color: #e53935; }
+.cpb-card__success { color: #22c55e; }
+.cpb-card__error { color: #e11d48; }
 .cpb-card__availability {
-  font-size: 0.95em;
-  color: #888;
-  margin-top: 0.5em;
+  font-size: 1em;
+  color: #64748b;
+  margin-top: 0.7em;
+  font-weight: 500;
+}
+@media (max-width: 600px) {
+  .cpb-card__info {
+    padding: 1rem 0.7rem 1rem 0.7rem;
+  }
+  .cpb-card__title {
+    font-size: 1.01rem;
+  }
+  .cpb-card__price {
+    font-size: 1.01rem;
+  }
 }
 </style>
